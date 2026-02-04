@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tóth Family - Teletabi Login</title>
+
+    <style>
+        body {
+            background-image: url("img/teletabik.jpg");
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            /* Flexbox a teljes oldalnak */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Felső piros sáv */
+        .felso {
+            background-color: rgba(51, 51, 51, 0.85);
+            border-bottom: 4px solid red;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .felso h1 {
+            color: #ff4d4d;
+            text-align: center;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Középső bejelentkező doboz */
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1; /* Kitölti a maradék helyet, így függőlegesen is középre kerül */
+            padding: 20px;
+        }
+
+        .login-box {
+            background-color: rgba(0, 0, 0, 0.6); /* Sötétített háttér a jobb olvashatóságért */
+            padding: 30px;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            backdrop-filter: blur(5px); /* Enyhe homályosítás a doboz mögött */
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-bottom: -10px;
+        }
+
+        #felhasznalonev, #jelszo {
+            width: 250px;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+        }
+
+        /* Belépés gomb */
+        .btn-belepes {
+            background-color: #ffd700; /* Teletabi sárga */
+            color: #333;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s, transform 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-belepes:hover {
+            background-color: #ffcc00;
+            transform: scale(1.05);
+        }
+
+        .btn-belepes:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="felso">
+        <h1>Üdvözöllek Teletabi, lépj be!</h1>
+    </div> 
+
+    <div class="login-container">
+        <form class="login-box">
+            <label for="felhasznalonev">Felhasználónév</label>
+            <input type="text" name="felhasznalonev" id="felhasznalonev" placeholder="Add meg a neved...">
+
+            <label for="jelszo">Jelszó</label>
+            <input type="password" name="jelszo" id="jelszo" placeholder="******">
+
+            <button type="button" class="btn-belepes">BELÉPÉS</button>
+        </form>
+    </div>
+
+</body>
+</html>
