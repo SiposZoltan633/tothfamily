@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tóth Family - Teletabi Login</title>
+    <title>Tóth Family - Családi Belépés</title>
 
     <style>
         body {
@@ -44,14 +44,15 @@
         }
 
         .login-box {
-            background-color: rgba(0, 0, 0, 0.6);
+            background-color: rgba(0, 0, 0, 0.7);
             padding: 30px;
             border-radius: 15px;
             display: flex;
             flex-direction: column;
             gap: 15px;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(8px);
             border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
 
         label {
@@ -78,7 +79,7 @@
             font-weight: bold;
             cursor: pointer;
             font-size: 16px;
-            transition: background 0.3s, transform 0.2s;
+            transition: all 0.3s;
             margin-top: 10px;
         }
 
@@ -96,51 +97,70 @@
 
     <div class="login-container">
         <div class="login-box">
-            <label for="felhasznalonev">Felhasználónév</label>
-            <input type="text" id="felhasznalonev" placeholder="Add meg a neved...">
+            <label for="felhasznalonev">Családtag neve</label>
+            <input type="text" id="felhasznalonev" placeholder="Pl. admin63 vagy anya">
 
             <label for="jelszo">Jelszó</label>
             <input type="password" id="jelszo" placeholder="******">
 
-            <button type="button" id="loginBtn" class="btn-belepes">BELÉPÉS</button>
+            <button type="button" id="loginBtn" class="btn-belepes">BELÉPÉS A WEBOLDALRA</button>
         </div>
     </div>
 
     <script type="module">
+        // Firebase modulok betöltése
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // A te egyedi Firebase konfigurációd
+        // A Te egyedi konfigurációd
         const firebaseConfig = {
             apiKey: "AIzaSyCs1IB9gKlY_7K_oawhVkttnMc_QI7BKnw",
             authDomain: "tothfamily-c87a3.firebaseapp.com",
             projectId: "tothfamily-c87a3",
+            databaseURL: "https://tothfamily-c87a3-default-rtdb.europe-west1.firebasedatabase.app",
             storageBucket: "tothfamily-c87a3.firebasestorage.app",
             messagingSenderId: "343802519326",
             appId: "1:343802519326:web:3fb878ee5d72e018d9330f",
             measurementId: "G-ZW9QCZYZ8T"
         };
 
+        // Firebase inicializálása
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getDatabase(app);
 
         const loginBtn = document.getElementById('loginBtn');
-        const userInp = document.getElementById('felhasznalonev');
-        const passInp = document.getElementById('jelszo');
 
         loginBtn.addEventListener('click', async () => {
-            const username = userInp.value;
-            const password = passInp.value;
+            const username = document.getElementById('felhasznalonev').value;
+            const password = document.getElementById('jelszo').value;
 
-            // Mivel a Firebase e-mailt vár, kiegészítjük
+            if(!username || !password) {
+                alert("Kérlek tölts ki minden mezőt!");
+                return;
+            }
+
+            // Automatikus e-mail kiegészítés a kitalált címhez
             const email = username.includes('@') ? username : username + "@toth.hu";
 
             try {
-                await signInWithEmailAndPassword(auth, email, password);
-                // Ha sikerül, átirányít az admin.html-re
+                // 1. Hitelesítés (Authentication)
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // 2. Naplózás a Realtime Database-be
+                await set(ref(db, 'jelenlet/' + username), {
+                    utoljára_itt: new Date().toLocaleString(),
+                    statusz: "online"
+                });
+
+                // 3. Átirányítás
                 window.location.href = 'admin.html';
+                
             } catch (error) {
-                alert("Hiba: " + error.message);
+                console.error(error);
+                alert("Hiba: Rossz név vagy jelszó!");
             }
         });
     </script>
