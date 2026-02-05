@@ -14,13 +14,11 @@
             background-position: center;
             background-attachment: fixed;
             color: white;
-            /* Flexbox a teljes oldalnak */
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
 
-        /* Felső piros sáv */
         .felso {
             background-color: rgba(51, 51, 51, 0.85);
             border-bottom: 4px solid red;
@@ -36,24 +34,23 @@
             letter-spacing: 2px;
         }
 
-        /* Középső bejelentkező doboz */
         .login-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            flex-grow: 1; /* Kitölti a maradék helyet, így függőlegesen is középre kerül */
+            flex-grow: 1;
             padding: 20px;
         }
 
         .login-box {
-            background-color: rgba(0, 0, 0, 0.6); /* Sötétített háttér a jobb olvashatóságért */
+            background-color: rgba(0, 0, 0, 0.6);
             padding: 30px;
             border-radius: 15px;
             display: flex;
             flex-direction: column;
             gap: 15px;
-            backdrop-filter: blur(5px); /* Enyhe homályosítás a doboz mögött */
+            backdrop-filter: blur(5px);
             border: 1px solid rgba(255,255,255,0.2);
         }
 
@@ -72,9 +69,8 @@
             font-size: 16px;
         }
 
-        /* Belépés gomb */
         .btn-belepes {
-            background-color: #ffd700; /* Teletabi sárga */
+            background-color: #ffd700;
             color: #333;
             border: none;
             padding: 12px;
@@ -90,10 +86,6 @@
             background-color: #ffcc00;
             transform: scale(1.05);
         }
-
-        .btn-belepes:active {
-            transform: scale(0.95);
-        }
     </style>
 </head>
 <body>
@@ -103,16 +95,54 @@
     </div> 
 
     <div class="login-container">
-        <form class="login-box">
+        <div class="login-box">
             <label for="felhasznalonev">Felhasználónév</label>
-            <input type="text" name="felhasznalonev" id="felhasznalonev" placeholder="Add meg a neved...">
+            <input type="text" id="felhasznalonev" placeholder="Add meg a neved...">
 
             <label for="jelszo">Jelszó</label>
-            <input type="password" name="jelszo" id="jelszo" placeholder="******">
+            <input type="password" id="jelszo" placeholder="******">
 
-            <button type="button" class="btn-belepes">BELÉPÉS</button>
-        </form>
+            <button type="button" id="loginBtn" class="btn-belepes">BELÉPÉS</button>
+        </div>
     </div>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        // A te egyedi Firebase konfigurációd
+        const firebaseConfig = {
+            apiKey: "AIzaSyCs1IB9gKlY_7K_oawhVkttnMc_QI7BKnw",
+            authDomain: "tothfamily-c87a3.firebaseapp.com",
+            projectId: "tothfamily-c87a3",
+            storageBucket: "tothfamily-c87a3.firebasestorage.app",
+            messagingSenderId: "343802519326",
+            appId: "1:343802519326:web:3fb878ee5d72e018d9330f",
+            measurementId: "G-ZW9QCZYZ8T"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        const loginBtn = document.getElementById('loginBtn');
+        const userInp = document.getElementById('felhasznalonev');
+        const passInp = document.getElementById('jelszo');
+
+        loginBtn.addEventListener('click', async () => {
+            const username = userInp.value;
+            const password = passInp.value;
+
+            // Mivel a Firebase e-mailt vár, kiegészítjük
+            const email = username.includes('@') ? username : username + "@toth.hu";
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                // Ha sikerül, átirányít az admin.html-re
+                window.location.href = 'admin.html';
+            } catch (error) {
+                alert("Hiba: " + error.message);
+            }
+        });
+    </script>
 </body>
 </html>
