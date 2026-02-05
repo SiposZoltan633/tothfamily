@@ -2,35 +2,46 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tóthfamily</title>
+    <title>Tóth Family - Üzenőfal</title>
     <style>
-        .felso {
-            background-color: rgba(51, 51, 51, 0.85);
-            border-bottom: 4px solid red;
-            padding: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-
-        .felso h1 {
-            color: #ff4d4d;
-            text-align: center;
-            margin: 0;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
+        body { background: #1a1a1a; color: white; font-family: sans-serif; padding: 20px; }
+        #uzenetek { border: 1px solid #ff4d4d; height: 300px; overflow-y: scroll; padding: 10px; margin-bottom: 10px; }
+        input { padding: 10px; width: 70%; }
+        button { padding: 10px; background: #ffd700; border: none; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="felso">
-    <h1>TóthFamily</h1>
-    <ul id="ulb">
-      <li class="lib"><a href="https://siposzoltan633.github.io/t-thfamily/index.html">bejelentkezőoldal</a></li>
-      <li class="lib"><a class="active" href="https://siposzoltan633.github.io/t-thfamily/tothfamily.html">Főolal</a></li>
-      <li class="lib"><a href="https://siposzoltan633.github.io/t-thfamily/chat.html">Chat</a></li>
-      <li class="lib"><a href="https://siposzoltan633.github.io/t-thfamily/kepek.html">Képek</a></li>
-    </ul>
-  </div>  
-</body>
+    <h1>Családi Üzenőfal</h1>
+    <div id="uzenetek"></div>
+    <input type="text" id="ujUzenet" placeholder="Írj valamit a családnak...">
+    <button id="kuldBtn">KÜLDÉS</button>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Ide is kell a firebaseConfig ugyanazzal a databaseURL-lel!
+        const firebaseConfig = { /* ... a Te adataid ... */ };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const uzenetBox = document.getElementById('uzenetek');
+        const uzenetRef = ref(db, 'uzenetek');
+
+        // Üzenet küldése
+        document.getElementById('kuldBtn').onclick = () => {
+            const txt = document.getElementById('ujUzenet').value;
+            push(uzenetRef, { szoveg: txt, ido: new Date().toLocaleTimeString() });
+            document.getElementById('ujUzenet').value = '';
+        };
+
+        // Üzenetek valós idejű megjelenítése
+        onChildAdded(uzenetRef, (data) => {
+            const p = document.createElement('p');
+            p.innerText = `[${data.val().ido}] ${data.val().szoveg}`;
+            uzenetBox.appendChild(p);
+            uzenetBox.scrollTop = uzenetBox.scrollHeight;
+        });
+    </script>
+</body>
 </html>
